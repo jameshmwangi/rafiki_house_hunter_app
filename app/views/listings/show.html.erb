@@ -150,7 +150,9 @@
             <%= render "listings/comment", comment: comment, listing: @listing %>
           <% end %>
         </div>
-        <a href="#" class="wantu-link d-block mt-3" data-controller="toggle-comments" data-action="click->toggle-comments#toggle">
+        <a href="#" class="wantu-link d-block mt-3" data-controller="toggle-comments" data-action="click->toggle-comments#toggle"
+           data-toggle-comments-target-value="comments-hidden"
+           data-show-text="<%= t('listings.show.see_all_comments') %> ›" data-hide-text="<%= t('listings.show.hide_comments', default: 'Hide comments') %> ›">
           <%= t('listings.show.see_all_comments') %> &rsaquo;
         </a>
       <% end %>

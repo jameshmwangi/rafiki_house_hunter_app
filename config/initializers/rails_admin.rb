@@ -1,5 +1,5 @@
 RailsAdmin.config do |config|
-  config.asset_source = :importmap
+  config.asset_source = :sprockets
 
   ### Mount path
   config.main_app_name = ['Wantu', 'Admin']
@@ -31,7 +31,42 @@ RailsAdmin.config do |config|
 
   # ── Actions ─────────────────────────────────────────────────────
   config.actions do
-    dashboard
+    dashboard do
+      controller do
+        proc do
+          @stats = {
+            total_users:       User.count,
+            active_listings:   Listing.published.count,
+            total_bookings:    ViewingAppointment.count,
+            payments_received: PaymentAttempt
+                                 .successful
+                                 .joins(:viewing_appointment)
+                                 .sum('viewing_appointments.fee_amount')
+          }
+
+          @finance = {}
+          @finance[:total_processed] = @stats[:payments_received]
+
+          @finance[:total_released] = ViewingAppointment
+            .status_completed
+            .joins(:payment_attempts)
+            .where(payment_attempts: { outcome: 'success' })
+            .sum(:fee_amount)
+
+          @finance[:held_in_escrow] = ViewingAppointment
+            .where(status: %w[awaiting_confirmation confirmed])
+            .joins(:payment_attempts)
+            .where(payment_attempts: { outcome: 'success' })
+            .sum(:fee_amount)
+
+          @recent_users    = User.order(created_at: :desc).limit(5)
+          @recent_listings = Listing
+                               .includes(:user, :location)
+                               .order(created_at: :desc)
+                               .limit(5)
+        end
+      end
+    end
     index
     show
     new
@@ -99,7 +134,7 @@ RailsAdmin.config do |config|
         label 'Type'
       end
       field :price do
-        formatted_value { number_with_delimiter(value.to_i) }
+        formatted_value { bindings[:view].number_with_delimiter(value.to_i) }
       end
       field :status do
         formatted_value do
@@ -203,7 +238,7 @@ RailsAdmin.config do |config|
       field :status
       field :fee_status
       field :fee_amount do
-        formatted_value { "Ksh #{number_with_delimiter(value.to_i)}" }
+        formatted_value { "Ksh #{bindings[:view].number_with_delimiter(value.to_i)}" }
       end
     end
 
@@ -311,7 +346,7 @@ RailsAdmin.config do |config|
         formatted_value { bindings[:object].author.full_name }
       end
       field :body do
-        formatted_value { truncate(value, length: 60) }
+        formatted_value { bindings[:view].truncate(value, length: 60) }
       end
       field :created_at
     end

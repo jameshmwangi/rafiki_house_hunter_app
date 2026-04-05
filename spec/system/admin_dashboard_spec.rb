@@ -9,19 +9,15 @@ RSpec.describe "Admin Dashboard", type: :system do
   describe "admin access" do
     it "allows admin to view the dashboard" do
       sign_in admin
-      visit admin_root_path
+      visit rails_admin.dashboard_path
 
-      expect(page).to have_content("Wantu Admin")
-      expect(page).to have_content(I18n.t('admin.users'))
-      expect(page).to have_content(I18n.t('admin.listings'))
+      expect(page).to have_content("Platform Overview")
     end
 
-    it "redirects non-admin users with an error" do
+    it "does not expose admin routes to non-admin users" do
       sign_in regular_user
-      visit admin_root_path
 
-      expect(page).to have_current_path(root_path)
-      expect(page).to have_content(I18n.t('errors.not_authorized'))
+      expect { visit "/admin" }.to raise_error(ActionController::RoutingError)
     end
   end
 end

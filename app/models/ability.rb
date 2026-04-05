@@ -22,6 +22,9 @@ class Ability
     can :create, PropertyComment
     can :destroy, PropertyComment, author_id: user.id
     can :create, ViewingAppointment
+    cannot :create, ViewingAppointment do |appointment|
+      appointment.listing&.user_id == user.id
+    end
     can :read, ViewingAppointment, home_seeker_id: user.id
     can :create, AgentReview
     can [:update, :destroy], AgentReview, author_id: user.id

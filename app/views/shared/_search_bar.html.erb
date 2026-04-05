@@ -1,10 +1,11 @@
 <div class="wantu-search">
-  <%= form_tag listings_path, method: :get do %>
-    <%# Tabs: Rent / Buy / BnB / All %>
+  <%= form_tag listings_path, method: :get, data: { controller: "search-tabs" } do %>
+    <%# Tabs: Rent / Buy / BnB / All — auto-submit on click %>
     <div class="wantu-search__tabs">
       <% Listing::NEED_TYPES.each do |type| %>
         <input type="radio" class="btn-check" name="need_type"
                id="tab_<%= type %>" value="<%= type %>" autocomplete="off"
+               data-action="change->search-tabs#submit"
                <%= 'checked' if params[:need_type] == type %>>
         <label class="wantu-tab"
                for="tab_<%= type %>">
@@ -13,6 +14,7 @@
       <% end %>
       <input type="radio" class="btn-check" name="need_type"
              id="tab_all" value="" autocomplete="off"
+             data-action="change->search-tabs#submit"
              <%= 'checked' if params[:need_type].blank? %>>
       <label class="wantu-tab" for="tab_all">
         <%= t('home.need_type.all', default: 'All') %>

@@ -37,7 +37,7 @@
       <% end %>
     </div>
 
-    <% @reviews.limit(3).each do |review| %>
+    <% @reviews.first(2).each do |review| %>
       <div class="card mb-3 border-dark rounded-3">
         <div class="card-body p-4">
           <div class="text-warning mb-3">
@@ -52,7 +52,7 @@
             <div class="wantu-agent-card__avatar wantu-agent-card__avatar--review">
               <%= review.author.full_name.first(1).upcase %>
             </div>
-            <span class="text-lowercase"><%= review.author.full_name %></span>
+            <span><%= review.author.full_name %></span>
             <span>- date of review <%= l(review.created_at.to_date, format: :long) rescue review.created_at.to_date %></span>
             <a href="#" class="text-decoration-none text-muted ms-3">Reply</a>
             
@@ -68,9 +68,46 @@
       </div>
     <% end %>
 
-    <div class="mt-4">
-      <%= link_to t('agent_reviews.see_all', default: 'See all agent reviews &rarr;').html_safe, "#", class: "text-decoration-none font-monospace small text-primary" %>
-    </div>
+    <% if @reviews.size > 2 %>
+      <div id="reviews-hidden" style="display: none;">
+        <% @reviews.drop(2).each do |review| %>
+          <div class="card mb-3 border-dark rounded-3">
+            <div class="card-body p-4">
+              <div class="text-warning mb-3">
+                <% review.rating.times do %>&#9733;<% end %>
+                <% (5 - review.rating).times do %><span class="text-muted">&#9733;</span><% end %>
+              </div>
+              <% if review.title.present? %>
+                <h6 class="fw-bold font-monospace mb-2"><%= review.title %></h6>
+              <% end %>
+              <p class="mb-4 font-monospace small"><%= review.body %></p>
+              <div class="d-flex align-items-center gap-3 font-monospace small text-muted">
+                <div class="wantu-agent-card__avatar wantu-agent-card__avatar--review">
+                  <%= review.author.full_name.first(1).upcase %>
+                </div>
+                <span><%= review.author.full_name %></span>
+                <span>- date of review <%= l(review.created_at.to_date, format: :long) rescue review.created_at.to_date %></span>
+                <a href="#" class="text-decoration-none text-muted ms-3">Reply</a>
+                
+                <% if user_signed_in? && (review.author_id == current_user.id || current_user.admin?) %>
+                  <div class="ms-auto">
+                    <%= link_to t('actions.edit'), edit_agent_review_path(review), class: "text-primary text-decoration-none me-2" %>
+                    <%= button_to t('actions.delete'), agent_review_path(review), method: :delete, class: "btn btn-link text-danger p-0 m-0 text-decoration-none d-inline",
+                        data: { turbo_confirm: t('prompts.confirm_delete') } %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <a href="#" class="text-decoration-none font-monospace small text-primary d-block mt-3"
+         data-controller="toggle-comments" data-action="click->toggle-comments#toggle"
+         data-toggle-comments-target-value="reviews-hidden"
+         data-show-text="<%= t('agent_reviews.see_all', default: 'See all agent reviews →') %>" data-hide-text="<%= t('agent_reviews.hide_reviews', default: 'Hide reviews →') %>">
+        <%= t('agent_reviews.see_all', default: 'See all agent reviews →') %>
+      </a>
+    <% end %>
   </div>
 
   <%# Agent Listings %>

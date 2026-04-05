@@ -1,6 +1,7 @@
 class ViewingAppointmentsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_listing
+  before_action :prevent_self_booking
 
   def new
     @appointment = @listing.viewing_appointments.build(
@@ -17,14 +18,22 @@ class ViewingAppointmentsController < ApplicationController
     authorize! :create, @appointment
 
     if @appointment.save
-      AppointmentMailer.new_booking(@appointment).deliver_later
-      redirect_to listing_path(@listing), notice: t('viewing_appointments.created')
+      redirect_to new_payment_attempt_path(
+        viewing_appointment_id: @appointment.id,
+        payment_method: params[:payment_method].presence || 'mpesa'
+      )
     else
       render :new, status: :unprocessable_entity
     end
   end
 
   private
+
+  def prevent_self_booking
+    return unless @listing.user_id == current_user.id
+
+    redirect_to listing_path(@listing), alert: t('errors.cannot_book_own_listing')
+  end
 
   def set_listing
     @listing = Listing.published.find(params[:listing_id])

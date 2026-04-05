@@ -27,7 +27,7 @@
       <div class="wantu-navbar__actions">
         <% if user_signed_in? %>
           <% if can? :access, :admin_dashboard %>
-            <%= link_to t('nav.admin'), admin_root_path, class: "wantu-navbar__link" %>
+            <%= link_to t('nav.admin'), rails_admin.dashboard_path, class: "wantu-navbar__link" %>
           <% end %>
           <% if current_user.property_manager? %>
             <%= link_to t('nav.dashboard'), dashboard_path, class: "wantu-navbar__link" %>

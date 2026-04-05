@@ -314,6 +314,7 @@ en:
 
   errors:
     not_authorized: "You are not authorized to perform that action."
+    cannot_book_own_listing: "Agents can't book a viewing on their own listing."
     not_found: "The page you're looking for doesn't exist."
     server_error: "Something went wrong. Please try again later."
     "404":
