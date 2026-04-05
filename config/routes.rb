@@ -2,6 +2,11 @@ Rails.application.routes.draw do
   # Auth
   devise_for :users, controllers: { registrations: 'users/registrations' }
 
+  # Admin — rails_admin (authenticated, admin-only)
+  authenticate :user, ->(u) { u.admin? } do
+    mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  end
+
   # Root
   root 'pages#home'
 
@@ -41,11 +46,6 @@ Rails.application.routes.draw do
 
   # Payment Attempts
   resources :payment_attempts, only: [:new, :create]
-
-  # Admin
-  namespace :admin do
-    root to: 'dashboard#show'
-  end
 
   # Error pages
   match '/404', to: 'errors#not_found', via: :all

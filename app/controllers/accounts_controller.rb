@@ -15,6 +15,17 @@ class AccountsController < ApplicationController
 
   def update
     @user = current_user
+
+    if password_update_requested?
+      update_with_password
+    else
+      update_profile
+    end
+  end
+
+  private
+
+  def update_profile
     if @user.update(account_params)
       redirect_to account_path, notice: t('users.updated')
     else
@@ -22,9 +33,29 @@ class AccountsController < ApplicationController
     end
   end
 
-  private
+  def update_with_password
+    unless @user.valid_password?(params[:user][:current_password])
+      @user.errors.add(:current_password, t('errors.messages.invalid'))
+      return render :edit, status: :unprocessable_entity
+    end
+
+    if @user.update(account_params_with_password)
+      bypass_sign_in(@user)
+      redirect_to account_path, notice: t('users.updated')
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def password_update_requested?
+    params[:user][:password].present?
+  end
 
   def account_params
-    params.require(:user).permit(:full_name, :phone_number)
+    params.require(:user).permit(:full_name, :phone_number, :bio)
+  end
+
+  def account_params_with_password
+    params.require(:user).permit(:full_name, :phone_number, :bio, :password, :password_confirmation)
   end
 end

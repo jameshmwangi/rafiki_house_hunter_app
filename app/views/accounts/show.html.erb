@@ -48,7 +48,7 @@
       <h4 class="mb-3 font-serif">BIO</h4>
       <div class="card mb-4">
         <div class="card-body">
-          <p class="mb-0 text-muted"><%= @user.respond_to?(:bio) && @user.bio.present? ? @user.bio : 'No description provided.' %></p>
+          <p class="mb-0 text-muted"><%= @user.bio.present? ? @user.bio : 'No description provided.' %></p>
         </div>
       </div>
 

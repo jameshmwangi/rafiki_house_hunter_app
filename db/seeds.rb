@@ -210,7 +210,7 @@ puts "Seeding property images..."
 available_images = %w[
   featuredhero1.png featuredhero2.png featuredhero3.png
   featuredhero4.png featuredhero5.png featuredhero6.png 
-].map { |f| Rails.root.join('..', 'images', 'seed-placeholder-images', f) }
+].map { |f| Rails.root.join('app', 'assets', 'images', f) }
  .select { |p| File.exist?(p) }
 
 all_listings.each do |listing|
@@ -264,7 +264,7 @@ end
 
 puts "Seeding payment attempts..."
 appointments.each_with_index do |appt, i|
-  outcome = appt.fee_status == 'paid' ? 'success' : 'failure'
+  outcome = appt.fee_status == 'paid' ? 'success' : 'failed'
   seed!(PaymentAttempt, { viewing_appointment: appt, outcome: outcome },
         payment_method: i.even? ? 'mpesa' : 'card',
         payment_reference: outcome == 'success' ? "WANTU#{SecureRandom.hex(5).upcase}" : nil)

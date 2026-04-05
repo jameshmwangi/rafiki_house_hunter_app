@@ -5,11 +5,13 @@ class ViewingAppointment < ApplicationRecord
 
   has_many :payment_attempts, dependent: :destroy
 
-  STATUSES     = %w[pending confirmed declined completed].freeze
+  STATUSES     = %w[pending awaiting_confirmation confirmed declined completed].freeze
   FEE_STATUSES = %w[unpaid paid].freeze
 
   validates :scheduled_at, presence: true
   validates :fee_amount, numericality: { greater_than_or_equal_to: 0 }
   validates :status, presence: true, inclusion: { in: STATUSES }
   validates :fee_status, presence: true, inclusion: { in: FEE_STATUSES }
+
+  scope :status_completed, -> { where(status: 'completed') }
 end
