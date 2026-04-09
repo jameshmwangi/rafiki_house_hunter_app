@@ -14,15 +14,14 @@
 
   <!-- Hero Image + Thumbnails -->
   <div class="wantu-gallery mb-4" data-controller="gallery">
-    <% images = @listing.property_images.select { |pi| pi.image.attached? } %>
-    <% if images.any? %>
+    <% if @images.any? %>
       <div class="wantu-gallery__main" data-gallery-open="0" style="cursor: pointer;">
-        <%= image_tag images.first.image, class: "wantu-gallery__main-img", alt: @listing.title %>
+        <%= image_tag @images.first.image, class: "wantu-gallery__main-img", alt: @listing.title %>
       </div>
-      <% if images.size > 1 %>
+      <% if @images.size > 1 %>
         <div class="wantu-gallery__thumbnails">
-          <% visible_thumbs = images.drop(1).first(3) %>
-          <% remaining = images.size - 1 - visible_thumbs.size %>
+          <% visible_thumbs = @images.drop(1).first(3) %>
+          <% remaining = @images.size - 1 - visible_thumbs.size %>
           <% visible_thumbs.each_with_index do |pi, idx| %>
             <div data-gallery-open="<%= idx + 1 %>" style="cursor: pointer;">
               <%= image_tag pi.image, class: "wantu-gallery__thumb", alt: @listing.title %>
@@ -41,12 +40,12 @@
         <div class="modal-dialog modal-xl modal-dialog-centered">
           <div class="modal-content" style="background: #000; border: none;">
             <div class="modal-header border-0 pb-0">
-              <span class="text-white small" id="galleryCounter">1 / <%= images.size %></span>
+              <span class="text-white small" id="galleryCounter">1 / <%= @images.size %></span>
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-0 position-relative d-flex align-items-center justify-content-center" style="min-height: 60vh;">
               <button type="button" class="wantu-gallery-nav wantu-gallery-nav--prev" id="galleryPrev">&lsaquo;</button>
-              <% images.each_with_index do |pi, idx| %>
+              <% @images.each_with_index do |pi, idx| %>
                 <div class="wantu-gallery-slide" data-slide="<%= idx %>" style="<%= 'display:none;' unless idx == 0 %>">
                   <%= image_tag pi.image, class: "wantu-gallery-slide__img", alt: "#{@listing.title} - #{idx + 1}" %>
                 </div>
@@ -54,7 +53,7 @@
               <button type="button" class="wantu-gallery-nav wantu-gallery-nav--next" id="galleryNext">&rsaquo;</button>
             </div>
             <div class="modal-footer border-0 pt-0 justify-content-center gap-2 flex-wrap" id="galleryThumbs">
-              <% images.each_with_index do |pi, idx| %>
+              <% @images.each_with_index do |pi, idx| %>
                 <%= image_tag pi.image, class: "wantu-gallery-thumb-nav #{'active' if idx == 0}", data: { thumb: idx }, alt: "Thumbnail #{idx + 1}" %>
               <% end %>
             </div>
@@ -80,9 +79,8 @@
       <%= t('listings.show.share') %>
     </button>
     <% if user_signed_in? %>
-      <% fav = current_user.favourites.find_by(listing_id: @listing.id) %>
-      <% if fav %>
-        <%= button_to favourite_path(fav), method: :delete, class: "wantu-btn-fav wantu-btn-fav--active" do %>
+      <% if @favourite %>
+        <%= button_to favourite_path(@favourite), method: :delete, class: "wantu-btn-fav wantu-btn-fav--active" do %>
           &#9829;
         <% end %>
       <% else %>
@@ -119,7 +117,7 @@
 
     <div class="wantu-comment-form-box">
       <% if user_signed_in? %>
-        <%= form_with url: listing_property_comments_path(@listing), class: "wantu-comment-form", data: { controller: "comment-form", comment_form_listing_id_value: @listing.id } do |f| %>
+        <%= form_with url: listing_property_comments_path(@listing), scope: :property_comment, class: "wantu-comment-form", data: { controller: "comment-form", comment_form_listing_id_value: @listing.id } do |f| %>
           <%= f.text_area :body,
               placeholder: t('property_comments.fields.body'),
               rows: 2,
@@ -138,15 +136,14 @@
 
       <!-- Existing Comments -->
       <div id="comments-list">
-        <% top_level_comments = @listing.property_comments.includes(:author, replies: :author).where(parent_comment_id: nil).order(created_at: :desc) %>
-        <% top_level_comments.first(2).each do |comment| %>
+        <% @top_level_comments.first(2).each do |comment| %>
           <%= render "listings/comment", comment: comment, listing: @listing %>
         <% end %>
       </div>
 
-      <% if top_level_comments.size > 2 %>
+      <% if @top_level_comments.size > 2 %>
         <div id="comments-hidden" style="display: none;">
-          <% top_level_comments.drop(2).each do |comment| %>
+          <% @top_level_comments.drop(2).each do |comment| %>
             <%= render "listings/comment", comment: comment, listing: @listing %>
           <% end %>
         </div>
@@ -173,7 +170,7 @@
             <%= link_to @listing.user.full_name, agent_profile_path(@listing.user), class: "text-decoration-none fw-medium" %>
             <p class="mb-0 small text-muted">
               <%= t("roles.#{@listing.user.role}") %> &middot;
-              <%= @listing.user.listings.published.count %>
+              <%= @agent_listing_count %>
               <%= t('dashboard.my_listings') %>
             </p>
           </div>

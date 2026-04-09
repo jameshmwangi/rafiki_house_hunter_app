@@ -35,8 +35,9 @@
         <%= t('listings.view_property') %> <span class="wantu-btn-view__arrow">&#8599;</span>
       <% end %>
       <% if user_signed_in? %>
-        <% if current_user.favourites.exists?(listing_id: listing.id) %>
-          <%= button_to favourites_path(listing_id: listing.id), method: :delete,
+        <% fav_id = @favourite_ids_by_listing[listing.id] %>
+        <% if fav_id %>
+          <%= button_to favourite_path(fav_id), method: :delete,
               class: "wantu-btn-fav wantu-btn-fav--active",
               form: { data: { turbo_confirm: nil } } do %>
             &#9829;

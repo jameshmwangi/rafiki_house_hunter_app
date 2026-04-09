@@ -48,13 +48,13 @@
   <ul class="nav nav-tabs mb-4 border-bottom-0 gap-3">
     <li class="nav-item">
       <%= link_to t('dashboard.tabs.my_listings'), dashboard_path,
-          class: "nav-link border-0 border-bottom #{'active border-primary border-3 fw-bold text-dark' unless params[:tab] == 'bookings'} #{'text-muted' if params[:tab] == 'bookings'}",
-          style: ('border-color: var(--primary-green) !important;' unless params[:tab] == 'bookings') %>
+          class: nav_tab_class(active: params[:tab] != 'bookings'),
+          style: nav_tab_style(active: params[:tab] != 'bookings') %>
     </li>
     <li class="nav-item">
       <%= link_to t('dashboard.tabs.booking_requests'), dashboard_appointments_path,
-          class: "nav-link border-0 border-bottom #{'active border-primary border-3 fw-bold text-dark' if params[:tab] == 'bookings'} #{'text-muted' unless params[:tab] == 'bookings'}",
-          style: ('border-color: var(--primary-green) !important;' if params[:tab] == 'bookings') %>
+          class: nav_tab_class(active: params[:tab] == 'bookings'),
+          style: nav_tab_style(active: params[:tab] == 'bookings') %>
     </li>
   </ul>
 
@@ -93,9 +93,7 @@
               <td><%= listing.location.area_name %></td>
               <td>Ksh <%= number_with_delimiter(listing.price) %>/<%= listing.price_period %></td>
               <td>
-                <span class="badge bg-<%= listing.status == 'published' ? 'success' : listing.status == 'draft' ? 'secondary' : 'warning' %>">
-                  <%= t("listings.status.#{listing.status}") %>
-                </span>
+                <%= listing_status_badge(listing) %>
               </td>
               <td>
                 <div class="d-flex gap-1">

@@ -11,5 +11,6 @@ class LocationsController < ApplicationController
                          .sorted_by(params[:sort])
                          .page(params[:page])
                          .per(12)
+    @favourite_ids_by_listing = current_user&.favourites&.pluck(:listing_id, :id)&.to_h || {}
   end
 end

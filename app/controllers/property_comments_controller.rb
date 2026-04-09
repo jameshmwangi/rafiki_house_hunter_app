@@ -34,6 +34,6 @@ class PropertyCommentsController < ApplicationController
   end
 
   def comment_params
-    params.permit(:body, :parent_comment_id)
+    params.require(:property_comment).permit(:body, :parent_comment_id)
   end
 end

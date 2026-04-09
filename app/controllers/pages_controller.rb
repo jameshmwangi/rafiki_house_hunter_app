@@ -15,5 +15,6 @@ class PagesController < ApplicationController
     locations_by_name = Location.where(area_name: LOCATION_CARDS.map { |c| c[:area] })
                                 .index_by(&:area_name)
     @location_cards = LOCATION_CARDS.map { |card| card.merge(location: locations_by_name[card[:area]]) }
+    @favourite_ids_by_listing = current_user&.favourites&.pluck(:listing_id, :id)&.to_h || {}
   end
 end

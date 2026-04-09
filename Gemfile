@@ -30,6 +30,7 @@ gem "jbuilder"
 gem "devise", "~> 4.9"
 gem "cancancan", "~> 3.5"
 gem "rails_admin", "~> 3.0"
+gem "sidekiq"
 gem "kaminari", "~> 1.2"
 gem "bootstrap", "~> 5.3"
 gem "sassc-rails"
@@ -62,6 +63,9 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Catch emails in development
+  gem "letter_opener_web", "~> 3.0"
 
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
   # gem "rack-mini-profiler"

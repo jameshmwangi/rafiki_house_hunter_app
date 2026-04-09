@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :property_comment do
-    listing { nil }
-    author { nil }
+    association :listing
+    association :author, factory: :user
+    body { "Great location and value for money." }
     parent_comment { nil }
-    body { "MyText" }
   end
 end

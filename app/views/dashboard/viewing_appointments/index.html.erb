@@ -13,26 +13,26 @@
     <li class="nav-item">
       <%= link_to "#{t('dashboard.filter.all')} (#{@counts[:all]})",
           dashboard_appointments_path,
-          class: "nav-link border-0 border-bottom #{'active border-primary border-3 fw-bold text-dark' unless params[:status].present?} #{'text-muted fw-bold' if params[:status].present?}",
-          style: ('border-color: var(--primary-green) !important;' unless params[:status].present?) %>
+          class: nav_tab_class(active: params[:status].blank?),
+          style: nav_tab_style(active: params[:status].blank?) %>
     </li>
     <li class="nav-item">
       <%= link_to "#{t('dashboard.filter.pending')} (#{@counts[:pending]})",
           dashboard_appointments_path(status: 'pending'),
-          class: "nav-link border-0 border-bottom #{'active border-primary border-3 fw-bold text-dark' if params[:status] == 'pending'} #{'text-muted fw-bold' unless params[:status] == 'pending'}",
-          style: ('border-color: var(--primary-green) !important;' if params[:status] == 'pending') %>
+          class: nav_tab_class(active: params[:status] == 'pending'),
+          style: nav_tab_style(active: params[:status] == 'pending') %>
     </li>
     <li class="nav-item">
       <%= link_to "#{t('dashboard.filter.confirmed')} (#{@counts[:confirmed]})",
           dashboard_appointments_path(status: 'confirmed'),
-          class: "nav-link border-0 border-bottom #{'active border-primary border-3 fw-bold text-dark' if params[:status] == 'confirmed'} #{'text-muted fw-bold' unless params[:status] == 'confirmed'}",
-          style: ('border-color: var(--primary-green) !important;' if params[:status] == 'confirmed') %>
+          class: nav_tab_class(active: params[:status] == 'confirmed'),
+          style: nav_tab_style(active: params[:status] == 'confirmed') %>
     </li>
     <li class="nav-item">
       <%= link_to "#{t('dashboard.filter.completed')} (#{@counts[:completed]})",
           dashboard_appointments_path(status: 'completed'),
-          class: "nav-link border-0 border-bottom #{'active border-primary border-3 fw-bold text-dark' if params[:status] == 'completed'} #{'text-muted fw-bold' unless params[:status] == 'completed'}",
-          style: ('border-color: var(--primary-green) !important;' if params[:status] == 'completed') %>
+          class: nav_tab_class(active: params[:status] == 'completed'),
+          style: nav_tab_style(active: params[:status] == 'completed') %>
     </li>
   </ul>
 

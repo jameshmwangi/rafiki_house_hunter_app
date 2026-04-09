@@ -58,4 +58,13 @@ class Listing < ApplicationRecord
       )
     end
   }
+
+  def publish!
+    update!(status: 'published')
+    ListingMailer.listing_published(self).deliver_later
+  end
+
+  def hide!
+    update!(status: 'hidden')
+  end
 end

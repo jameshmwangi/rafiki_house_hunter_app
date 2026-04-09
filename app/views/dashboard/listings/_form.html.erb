@@ -1,5 +1,8 @@
+<% photo_section_num = listing.persisted? ? 6 : 5 %>
+<% existing_count = listing.persisted? ? listing.property_images.select { |pi| pi.image.attached? }.size : 0 %>
+
 <%= form_with model: [:dashboard, listing], class: "needs-validation", html: { multipart: true } do |f| %>
-  <%# Basic Info %>
+  <%# 1 — Basic Info %>
   <fieldset class="wantu-fieldset mb-4">
     <legend class="font-serif fw-bold text-uppercase fs-5 mb-3">1 <%= t('listings.fields.basic_information', default: 'BASIC INFORMATION') %></legend>
     <div class="mb-3">
@@ -22,7 +25,7 @@
     </div>
   </fieldset>
 
-  <%# Type %>
+  <%# 2 — Property Type %>
   <fieldset class="wantu-fieldset mb-4">
     <legend class="font-serif fw-bold text-uppercase fs-5 mb-3">2 <%= t('listings.fields.property_type', default: 'PROPERTY TYPE') %></legend>
     <div class="row">
@@ -30,8 +33,9 @@
         <p class="form-label fw-bold mb-2"><%= t('listings.fields.need_type') %></p>
         <div class="btn-group w-100" role="group">
           <% Listing::NEED_TYPES.each do |nt| %>
-            <%= f.radio_button :need_type, nt, class: "btn-check", id: "need_type_#{nt}", checked: listing.need_type == nt || (listing.new_record? && nt == 'rent') %>
-            <%= f.label "need_type_#{nt}", t("listings.need_type.#{nt}"), class: "btn btn-outline-success" %>
+            <%= f.radio_button :need_type, nt, class: "btn-check", id: "need_type_#{nt}",
+                checked: listing.need_type == nt || (listing.new_record? && nt == 'rent') %>
+            <label for="need_type_<%= nt %>" class="btn btn-outline-success"><%= t("listings.need_type.#{nt}") %></label>
           <% end %>
         </div>
         <% if listing.errors[:need_type].any? %>
@@ -67,26 +71,48 @@
     </div>
   </fieldset>
 
-  <%# Location %>
-  <fieldset class="wantu-fieldset mb-4">
+  <%# 3 — Location %>
+  <fieldset class="wantu-fieldset mb-4"
+            data-controller="location-select"
+            data-location-select-data-value="<%= LocationHelper::KENYA_COUNTIES.to_json %>">
     <legend class="font-serif fw-bold text-uppercase fs-5 mb-3">3 <%= t('listings.fields.location') %></legend>
     <div class="row">
       <div class="col-md-4 mb-3">
         <label class="form-label fw-bold">Country</label>
+        <input type="hidden" name="country" value="Kenya">
         <select class="form-select" disabled><option>Kenya</option></select>
       </div>
       <div class="col-md-4 mb-3">
-        <label class="form-label fw-bold">County</label>
-        <select class="form-select" disabled><option>Nairobi</option></select>
+        <label for="county" class="form-label fw-bold">County</label>
+        <%= select_tag :county,
+            options_for_select(
+              LocationHelper::KENYA_COUNTIES.keys.sort,
+              listing.location&.county
+            ),
+            prompt: "Select County",
+            class: "form-select",
+            data: { location_select_target: "county", action: "change->location-select#updateSubCounties" } %>
       </div>
       <div class="col-md-4 mb-3">
-        <%= f.label :location_id, "Sub-County / Area", class: "form-label fw-bold" %>
-        <%= f.collection_select :location_id, @locations, :id, :area_name,
-            { prompt: t('listings.fields.location') },
-            class: "form-select #{'is-invalid' if listing.errors[:location_id].any?}" %>
-        <% if listing.errors[:location_id].any? %>
-          <div class="invalid-feedback d-block"><%= listing.errors[:location_id].join(", ") %></div>
-        <% end %>
+        <label for="sub_county" class="form-label fw-bold">Sub-County</label>
+        <% selected_county = listing.location&.county %>
+        <% sub_county_options = selected_county.present? ? (LocationHelper::KENYA_COUNTIES[selected_county] || []) : LocationHelper::KENYA_COUNTIES.values.flatten %>
+        <%= select_tag :sub_county,
+            options_for_select(
+              sub_county_options,
+              listing.location&.sub_county
+            ),
+            prompt: "Select Sub-County",
+            class: "form-select",
+            data: { location_select_target: "subCounty", selected: listing.location&.sub_county } %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 mb-3">
+        <label for="area_name" class="form-label fw-bold">Area / Neighbourhood</label>
+        <%= text_field_tag :area_name, listing.location&.area_name,
+            class: "form-control",
+            placeholder: "e.g. Sunton, Westlands, Karen..." %>
       </div>
     </div>
     <div class="row">
@@ -99,26 +125,9 @@
     </div>
   </fieldset>
 
-  <%# Photos %>
+  <%# 4 — Pricing & Fees %>
   <fieldset class="wantu-fieldset mb-4">
-    <legend class="font-serif fw-bold text-uppercase fs-5 mb-3">4 <%= t('listings.fields.photos', default: 'PHOTOS') %></legend>
-    <div class="mb-3">
-      <label class="form-label fw-bold"><%= t('listings.hints.upload_photos', default: 'Upload property images') %></label>
-      <div class="d-flex flex-wrap gap-2 mb-3">
-        <% 5.times do |i| %>
-          <div class="wantu-photo-slot d-flex align-items-center justify-content-center bg-light border rounded" style="width: 100px; height: 100px;">
-            <span class="text-muted small fw-bold">Photo <%= i + 1 %></span>
-          </div>
-        <% end %>
-      </div>
-      <%= file_field_tag "images[]", multiple: true, class: "form-control", accept: 'image/png,image/gif,image/jpeg' %>
-      <div class="form-text">Choose up to 5 images.</div>
-    </div>
-  </fieldset>
-
-  <%# Pricing %>
-  <fieldset class="wantu-fieldset mb-4">
-    <legend class="font-serif fw-bold text-uppercase fs-5 mb-3">5 <%= t('listings.fields.pricing_details', default: 'PRICING & DETAILS') %></legend>
+    <legend class="font-serif fw-bold text-uppercase fs-5 mb-3">4 <%= t('listings.fields.pricing_details', default: 'PRICING & FEES') %></legend>
     <div class="row">
       <div class="col-md-4 mb-3">
         <%= f.label :price, t('listings.fields.price'), class: "form-label" %>
@@ -148,34 +157,81 @@
         <div class="form-text text-success mt-1"><%= t('listings.form.viewing_fee_hint') %></div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-4 mb-3">
-        <%= f.label :bathrooms, t('listings.fields.bathrooms'), class: "form-label" %>
-        <%= f.number_field :bathrooms, min: 0, class: "form-control" %>
-      </div>
-    </div>
   </fieldset>
 
-  <%# Listing Status %>
-  <fieldset class="wantu-fieldset mb-4">
-    <legend class="font-serif fw-bold text-uppercase fs-5 mb-3">6 <%= t('listings.fields.listing_status', default: 'LISTING STATUS') %></legend>
-    <div class="mb-3">
-      <div class="btn-group" role="group">
-        <%= f.radio_button :status, 'published', class: "btn-check", id: "status_published", checked: listing.status == 'published' || listing.new_record? %>
-        <%= f.label "status_published", "Available", class: "btn btn-outline-success" %>
-        
-        <%= f.radio_button :status, 'hidden', class: "btn-check", id: "status_hidden", checked: listing.status == 'hidden' %>
-        <%= f.label "status_hidden", "Hidden", class: "btn btn-outline-success" %>
-        
-        <%= f.radio_button :status, 'draft', class: "btn-check", id: "status_draft", checked: listing.status == 'draft' %>
-        <%= f.label "status_draft", "Draft", class: "btn btn-outline-success" %>
+  <%# 5 — Listing Status (edit only) %>
+  <% if listing.persisted? %>
+    <fieldset class="wantu-fieldset mb-4">
+      <legend class="font-serif fw-bold text-uppercase fs-5 mb-3">5 <%= t('listings.fields.listing_status', default: 'LISTING STATUS') %></legend>
+      <div class="mb-3">
+        <p class="form-label fw-bold mb-2">Status</p>
+        <div class="btn-group" role="group">
+          <%= f.radio_button :status, 'published', class: "btn-check", id: "status_published",
+              checked: listing.status == 'published' %>
+          <label for="status_published" class="btn btn-outline-success">Available</label>
+
+          <%= f.radio_button :status, 'hidden', class: "btn-check", id: "status_hidden",
+              checked: listing.status == 'hidden' %>
+          <label for="status_hidden" class="btn btn-outline-success">Hidden</label>
+
+          <%= f.radio_button :status, 'draft', class: "btn-check", id: "status_draft",
+              checked: listing.status == 'draft' %>
+          <label for="status_draft" class="btn btn-outline-success">Draft</label>
+        </div>
+        <div class="form-text mt-1">Sets listings.status: Hidden removes it from public search results.</div>
       </div>
+    </fieldset>
+  <% end %>
+
+  <%# 5/6 — Photos %>
+  <fieldset class="wantu-fieldset mb-4">
+    <legend class="font-serif fw-bold text-uppercase fs-5 mb-3"><%= photo_section_num %> <%= t('listings.fields.photos', default: 'PHOTOS') %></legend>
+    <div class="mb-3">
+      <label class="form-label fw-bold"><%= t('listings.hints.upload_photos', default: 'Upload property images') %></label>
+
+      <%# Show existing images for persisted listings %>
+      <% if listing.persisted? && existing_count > 0 %>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <% listing.property_images.each do |pi| %>
+            <% if pi.image.attached? %>
+              <div class="position-relative" style="width: 100px; height: 100px;">
+                <%= image_tag pi.image, class: "rounded", style: "width:100px;height:100px;object-fit:cover;", alt: listing.title %>
+                <%= link_to dashboard_listing_property_image_path(listing, pi),
+                    data: { turbo_method: :delete, turbo_confirm: t('prompts.confirm_delete', default: 'Are you sure?') },
+                    class: "btn btn-sm btn-danger position-absolute top-0 end-0 p-0",
+                    style: "width:20px;height:20px;line-height:18px;font-size:12px;" do %>&times;<% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%# Placeholder slots for remaining capacity %>
+      <% placeholder_count = [8 - existing_count, 0].max %>
+      <% if placeholder_count > 0 %>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <% placeholder_count.times do |i| %>
+            <div class="wantu-photo-slot d-flex align-items-center justify-content-center bg-light border rounded" style="width: 100px; height: 100px;">
+              <span class="text-muted small fw-bold">Photo <%= existing_count + i + 1 %></span>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%= file_field_tag "images[]", multiple: true, class: "form-control",
+          accept: "image/png,image/gif,image/jpeg,image/webp" %>
+      <div class="form-text">Choose up to 8 images.</div>
     </div>
   </fieldset>
 
   <%# Submit %>
   <div class="wantu-form-actions d-flex gap-2 mt-4 pt-4 border-top">
-    <%= f.submit t('actions.save', default: 'Save Details'), class: "wantu-btn wantu-btn--primary px-5 py-2 fs-5" %>
-    <%= link_to t('actions.cancel', default: 'Cancel'), dashboard_listings_path, class: "btn btn-light px-4 py-2 border" %>
+    <% if listing.new_record? %>
+      <button type="submit" name="listing[status]" value="published" class="wantu-btn wantu-btn--primary px-5 py-2 fs-5">Publish Listing</button>
+      <button type="submit" name="listing[status]" value="draft" class="btn btn-light px-4 py-2 border">Save Draft</button>
+    <% else %>
+      <%= f.submit "Update Listing", class: "wantu-btn wantu-btn--primary px-5 py-2 fs-5" %>
+      <%= link_to "← Back", dashboard_listings_path, class: "btn btn-light px-4 py-2 border" %>
+    <% end %>
   </div>
 <% end %>

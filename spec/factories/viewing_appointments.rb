@@ -1,11 +1,20 @@
 FactoryBot.define do
   factory :viewing_appointment do
-    listing { nil }
-    home_seeker { nil }
-    agent { nil }
-    scheduled_at { "2026-03-27 22:15:32" }
-    fee_amount { 1 }
-    fee_status { "MyString" }
-    status { "MyString" }
+    association :listing
+    association :home_seeker, factory: :user
+    association :agent, factory: [:user, :agent]
+    scheduled_at { 3.days.from_now }
+    fee_amount { 500 }
+    fee_status { "unpaid" }
+    status { "pending" }
+
+    trait :confirmed do
+      status { "confirmed" }
+    end
+
+    trait :completed do
+      status { "completed" }
+      fee_status { "paid" }
+    end
   end
 end

@@ -11,19 +11,17 @@ class PaymentAttemptsController < ApplicationController
   def create
     authorize! :create, PaymentAttempt
 
+    if @appointment.fee_status == 'paid'
+      return redirect_to listing_path(@appointment.listing),
+                          alert: t('payment_attempts.already_paid')
+    end
+
     payment_method = params[:payment_method].presence || 'mpesa'
     simulation     = params[:payment_simulation].presence || 'success'
-    outcome        = simulation == 'success' ? 'success' : 'failed'
 
-    @payment = @appointment.payment_attempts.create!(
-      payment_method: payment_method,
-      outcome: outcome,
-      payment_reference: outcome == 'success' ? "WTU-#{SecureRandom.hex(6).upcase}" : nil
-    )
+    @payment = @appointment.process_payment!(payment_method: payment_method, simulation: simulation)
 
-    if outcome == 'success'
-      @appointment.update!(fee_status: 'paid')
-      AppointmentMailer.new_booking(@appointment).deliver_later
+    if @payment.outcome == 'success'
       redirect_to listing_path(@appointment.listing), notice: t('payment_attempts.success', reference: @payment.payment_reference)
     else
       redirect_to listing_path(@appointment.listing), alert: t('payment_attempts.failure')

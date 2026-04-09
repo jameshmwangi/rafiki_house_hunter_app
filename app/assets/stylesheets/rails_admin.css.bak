@@ -1,6 +1,0 @@
-/*
- * RailsAdmin styles — minimal stub for the importmap asset_source layout.
- * The full RailsAdmin theme is loaded via Bootstrap + rails_admin_custom.css.
- *
- *= require rails_admin_custom
- */

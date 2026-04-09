@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+  # Development-only tools
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: '/letter_opener'
+
+    require 'sidekiq/web'
+    mount Sidekiq::Web, at: '/sidekiq'
+  end
+
   # Auth
   devise_for :users, controllers: { registrations: 'users/registrations' }
 

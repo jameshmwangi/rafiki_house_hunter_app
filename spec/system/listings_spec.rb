@@ -95,10 +95,12 @@ RSpec.describe "Listings", type: :system do
       visit new_dashboard_listing_path
       fill_in "Title", with: "New Test Listing"
       fill_in "Description", with: "A lovely test property" * 3
-      select location.area_name, from: "Sub-County / Area"
+      select location.county, from: "county"
+      select location.sub_county, from: "sub_county"
+      fill_in "area_name", with: location.area_name
       fill_in "Price (KSh)", with: 25_000
       fill_in "Viewing Fee (KSh)", with: 200
-      click_button I18n.t('actions.save')
+      click_button "Publish Listing"
 
       expect(page).to have_content(I18n.t('listings.created'))
       expect(Listing.last.title).to eq("New Test Listing")
@@ -106,7 +108,7 @@ RSpec.describe "Listings", type: :system do
 
     it "shows validation errors when creating with invalid data" do
       visit new_dashboard_listing_path
-      click_button I18n.t('actions.save')
+      click_button "Publish Listing"
 
       expect(page).to have_content("can't be blank")
     end
@@ -121,7 +123,7 @@ RSpec.describe "Listings", type: :system do
       listing = create(:listing, user: agent, location: location, title: "Old Title")
       visit edit_dashboard_listing_path(listing)
       fill_in "Title", with: "Updated Title"
-      find('.wantu-form-actions').click_button I18n.t('actions.save')
+      click_button "Update Listing"
 
       expect(page).to have_content(I18n.t('listings.updated'))
       expect(listing.reload.title).to eq("Updated Title")
@@ -179,10 +181,12 @@ RSpec.describe "Listings", type: :system do
 
       fill_in "Title", with: "My First Listing"
       fill_in "Description", with: "Home seeker creates a listing"
-      select location.area_name, from: "Sub-County / Area"
+      select location.county, from: "county"
+      select location.sub_county, from: "sub_county"
+      fill_in "area_name", with: location.area_name
       fill_in "Price (KSh)", with: 20_000
       fill_in "Viewing Fee (KSh)", with: 0
-      click_button I18n.t('actions.save')
+      click_button "Publish Listing"
 
       expect(home_seeker.reload.role).to eq("agent")
     end

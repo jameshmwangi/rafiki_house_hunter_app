@@ -18,6 +18,7 @@ class ListingsController < ApplicationController
                        .page(params[:page])
                        .per(12)
 
+    @favourite_ids_by_listing = current_user&.favourites&.pluck(:listing_id, :id)&.to_h || {}
     @locations = Location.order(:area_name)
   end
 
@@ -25,5 +26,12 @@ class ListingsController < ApplicationController
     @listing = Listing.includes(:location, :property_images, :property_comments)
                       .find(params[:id])
     authorize! :read, @listing
+    @top_level_comments = @listing.property_comments
+                                  .includes(:author, replies: :author)
+                                  .where(parent_comment_id: nil)
+                                  .order(created_at: :desc)
+    @agent_listing_count = @listing.user.listings.published.count
+    @images = @listing.property_images.select { |pi| pi.image.attached? }
+    @favourite = current_user&.favourites&.find_by(listing_id: @listing.id)
   end
 end

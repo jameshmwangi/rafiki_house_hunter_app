@@ -2,6 +2,8 @@ module Dashboard
   class ViewingAppointmentsController < BaseController
     before_action :set_appointment, only: [:update]
 
+    ALLOWED_ACTIONS = %w[confirm decline complete].freeze
+
     def index
       @appointments = current_user.agent_appointments
                                   .includes(:listing, :home_seeker, payment_attempts: [])
@@ -9,33 +11,23 @@ module Dashboard
       @appointments = @appointments.where(status: params[:status]) if params[:status].present?
       @appointments = @appointments.page(params[:page]).per(10)
 
+      raw_counts = current_user.agent_appointments.group(:status).count
       @counts = {
-        all: current_user.agent_appointments.count,
-        pending: current_user.agent_appointments.where(status: 'pending').count,
-        confirmed: current_user.agent_appointments.where(status: 'confirmed').count,
-        completed: current_user.agent_appointments.where(status: 'completed').count
+        all:       raw_counts.values.sum,
+        pending:   raw_counts['pending'].to_i,
+        confirmed: raw_counts['confirmed'].to_i,
+        completed: raw_counts['completed'].to_i
       }
     end
 
     def update
-      authorize! params[:status_action].to_sym, @appointment
-
-      case params[:status_action]
-      when 'confirm'
-        @appointment.update!(status: 'confirmed')
-        AppointmentMailer.booking_confirmed(@appointment).deliver_later
-        redirect_to dashboard_appointments_path, notice: t('dashboard.booking_confirmed')
-      when 'decline'
-        @appointment.update!(status: 'declined')
-        AppointmentMailer.booking_declined(@appointment).deliver_later
-        redirect_to dashboard_appointments_path, notice: t('dashboard.booking_declined')
-      when 'complete'
-        @appointment.update!(status: 'completed')
-        AppointmentMailer.booking_completed(@appointment).deliver_later
-        redirect_to dashboard_appointments_path, notice: t('dashboard.booking_completed')
-      else
-        redirect_to dashboard_appointments_path, alert: t('errors.not_authorized')
+      unless ALLOWED_ACTIONS.include?(params[:status_action])
+        return redirect_to dashboard_appointments_path, alert: t('errors.not_authorized')
       end
+
+      authorize! params[:status_action].to_sym, @appointment
+      @appointment.transition_to!(params[:status_action])
+      redirect_to dashboard_appointments_path, notice: t("dashboard.booking_#{ViewingAppointment::TRANSITION_STATUSES[params[:status_action]]}")
     end
 
     private

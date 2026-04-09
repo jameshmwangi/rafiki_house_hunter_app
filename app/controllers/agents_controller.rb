@@ -6,7 +6,8 @@ class AgentsController < ApplicationController
                       .page(params[:page])
                       .per(6)
     @reviews = @agent.agent_reviews.includes(:author).order(created_at: :desc)
-    @avg_rating = @agent.agent_reviews.average(:rating)&.round(1) || 0.0
+    @avg_rating = @agent.average_agent_rating
     @review_count = @agent.agent_reviews.count
+    @favourite_ids_by_listing = current_user&.favourites&.pluck(:listing_id, :id)&.to_h || {}
   end
 end

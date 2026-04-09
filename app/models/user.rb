@@ -50,4 +50,23 @@ class User < ApplicationRecord
   def upgrade_to_agent!
     update!(role: 'agent') if home_seeker?
   end
+
+  def active_listings_count
+    listings.published.count
+  end
+
+  def booking_requests_count
+    agent_appointments.count
+  end
+
+  def fees_this_month
+    agent_appointments
+      .where(fee_status: 'paid')
+      .where('viewing_appointments.created_at >= ?', Time.current.beginning_of_month)
+      .sum(:fee_amount)
+  end
+
+  def average_agent_rating
+    agent_reviews.average(:rating)&.round(1) || 0.0
+  end
 end

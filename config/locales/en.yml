@@ -32,7 +32,7 @@
 en:
   app:
     name: "Wantu"
-    tagline: "Find your perfect home in Kenya"
+    tagline: "Find your perfect home in East Africa"
 
   nav:
     home: "Home"
@@ -63,7 +63,7 @@ en:
 
   home:
     hero_title: "Buy, rent, or sell your property easily"
-    subtitle: "Browse thousands of properties for rent, sale, and short stays across Kenya."
+    subtitle: "Browse thousands of properties for rent, sale, and short stays across East Africa."
     search_placeholder: "Search by Location, Building name, room layout"
     min_price: "Min (KSh)"
     max_price: "Max (KSh)"
@@ -369,6 +369,23 @@ en:
       greeting: "Hi %{name},"
       body: "You have a new viewing request for %{title}."
       cta: "View booking requests →"
+    payment_success:
+      subject: "Payment Confirmed — %{title} Viewing"
+      heading: "Payment received!"
+      greeting: "Hi %{name},"
+      body: "Your viewing fee payment for %{title} was successful."
+      reference: "Reference"
+      method: "Payment method"
+      footer: "Your booking is now pending agent confirmation. We'll email you once confirmed."
+    payment_failed:
+      subject: "Payment Unsuccessful — %{title}"
+      heading: "Payment unsuccessful"
+      greeting: "Hi %{name},"
+      body: "Your payment for the viewing of %{title} could not be processed."
+      method: "Method attempted"
+      reference: "Reference"
+      retry_cta: "Please try again. Your slot is still held for a short period."
+      browse_cta: "Browse properties →"
 
   devise:
     sessions:
