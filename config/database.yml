@@ -81,6 +81,4 @@ test:
 #
 production:
   <<: *default
-  database: wantu_house_hunter_rails_app_production
-  username: wantu_house_hunter_rails_app
-  password: <%= ENV["WANTU_HOUSE_HUNTER_RAILS_APP_DATABASE_PASSWORD"] %>
+  url: <%= ENV['DATABASE_URL'] %>

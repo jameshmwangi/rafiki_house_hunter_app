@@ -35,6 +35,7 @@ gem "kaminari", "~> 1.2"
 gem "bootstrap", "~> 5.3"
 gem "sassc-rails"
 gem "image_processing", "~> 1.2"
+gem "aws-sdk-s3", require: false
 
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 
