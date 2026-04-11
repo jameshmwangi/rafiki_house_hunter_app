@@ -4,8 +4,8 @@
   <%= turbo_stream.append "replies-#{parent}" do %>
     <div class="wantu-comment wantu-comment--reply">
       <div class="d-flex align-items-start gap-2">
-        <div class="wantu-comment__avatar wantu-comment__avatar--sm">
-          <%= @comment.author.full_name.first(1).upcase %>
+        <div class="wantu-comment__avatar wantu-comment__avatar--sm <%= @comment.author.avatar_role_class %>">
+          <%= avatar_for(@comment.author, img_class: 'wantu-comment__avatar__img') %>
         </div>
         <div class="flex-grow-1">
           <strong><%= @comment.author.full_name %></strong>

@@ -5,8 +5,8 @@
   <div class="card mb-5 border-dark rounded-3">
     <div class="card-body p-4">
       <div class="d-flex align-items-center gap-4 mb-4">
-        <div class="wantu-agent-card__avatar wantu-agent-card__avatar--lg">
-          <%= @agent.full_name.first(1).upcase %>
+        <div class="wantu-agent-card__avatar wantu-agent-card__avatar--lg <%= @agent.avatar_role_class %>">
+          <%= avatar_for(@agent, img_class: 'wantu-agent-card__avatar__img') %>
         </div>
         <div>
           <h2 class="mb-1 font-serif fw-bold"><%= @agent.full_name %></h2>

@@ -1,7 +1,7 @@
 <div class="wantu-comment" id="<%= dom_id(comment) %>">
   <div class="d-flex align-items-start gap-2">
-    <div class="wantu-agent-card__avatar wantu-agent-card__avatar--comment">
-      <%= comment.author.full_name.first(1).upcase %>
+    <div class="wantu-agent-card__avatar wantu-agent-card__avatar--comment <%= comment.author.avatar_role_class %>">
+      <%= avatar_for(comment.author, img_class: 'wantu-agent-card__avatar__img') %>
     </div>
     <div class="flex-grow-1">
       <strong><%= comment.author.full_name %></strong>

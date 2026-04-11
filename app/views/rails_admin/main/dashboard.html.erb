@@ -39,7 +39,7 @@
           <tr>
             <td>#<%= user.id %></td>
             <td>
-              <span class="user-avatar"><%= user.full_name.first %></span>
+              <span class="user-avatar <%= user.avatar_role_class %>"><% if user.avatar.attached? %><%= image_tag user.avatar, class: 'user-avatar__img', alt: user.full_name %><% else %><%= user.full_name.first %><% end %></span>
               <%= user.full_name %>
             </td>
             <td><%= user.email %></td>

@@ -13,8 +13,8 @@
       <%# Agent card %>
       <div class="card mb-4 border-dark rounded-3">
         <div class="card-body d-flex align-items-center gap-3">
-          <div class="wantu-avatar">
-            <%= agent.full_name.first(1).upcase %>
+          <div class="wantu-avatar <%= agent.avatar_role_class %>">
+            <%= avatar_for(agent) %>
           </div>
           <div>
             <strong><%= agent.full_name %></strong>

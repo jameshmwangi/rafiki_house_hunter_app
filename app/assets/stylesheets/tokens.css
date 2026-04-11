@@ -23,6 +23,9 @@
   --color-accent-blue:      #3B82F6;
   --color-accent-blue-dark: #2563EB;
 
+  /* Red — favourites / danger */
+  --color-accent-red:       #EF4444;
+
   /* Listing type badge tokens */
   --tag-rent-bg:     #E6F4EA;
   --tag-rent-text:   #137333;

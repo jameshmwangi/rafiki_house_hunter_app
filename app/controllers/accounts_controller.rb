@@ -52,7 +52,7 @@ class AccountsController < ApplicationController
   end
 
   def account_params
-    params.require(:user).permit(:full_name, :phone_number, :bio)
+    params.require(:user).permit(:full_name, :phone_number, :bio, :avatar)
   end
 
   def account_params_with_password

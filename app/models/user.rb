@@ -24,8 +24,15 @@ class User < ApplicationRecord
 
   has_many :property_comments,    foreign_key: :author_id, dependent: :destroy
 
+  has_one_attached :avatar
+
   validates :full_name, presence: true
   validates :role, presence: true, inclusion: { in: ROLES }
+  validate :acceptable_avatar
+
+  def avatar_role_class
+    "avatar-role--#{role}"
+  end
 
   def property_manager?
     agent? || landlord?
@@ -68,5 +75,19 @@ class User < ApplicationRecord
 
   def average_agent_rating
     agent_reviews.average(:rating)&.round(1) || 0.0
+  end
+
+  private
+
+  def acceptable_avatar
+    return unless avatar.attached?
+
+    unless avatar.blob.content_type.in?(%w[image/png image/jpeg image/webp])
+      errors.add(:avatar, 'must be a PNG, JPEG, or WebP image')
+    end
+
+    if avatar.blob.byte_size > 5.megabytes
+      errors.add(:avatar, 'must be less than 5 MB')
+    end
   end
 end

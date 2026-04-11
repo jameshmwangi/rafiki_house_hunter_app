@@ -9,8 +9,8 @@
     <% end %>
     <p class="mb-4 font-monospace small"><%= review.body %></p>
     <div class="d-flex align-items-center gap-3 font-monospace small text-muted">
-      <div class="wantu-agent-card__avatar wantu-agent-card__avatar--review">
-        <%= review.author.full_name.first(1).upcase %>
+      <div class="wantu-agent-card__avatar wantu-agent-card__avatar--review <%= review.author.avatar_role_class %>">
+        <%= avatar_for(review.author, img_class: 'wantu-agent-card__avatar__img') %>
       </div>
       <span><%= review.author.full_name %></span>
       <span>- date of review <%= l(review.created_at.to_date, format: :long) rescue review.created_at.to_date %></span>

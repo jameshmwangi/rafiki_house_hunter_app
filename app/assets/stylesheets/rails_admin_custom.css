@@ -98,6 +98,11 @@
   font-weight: 700;
   margin-right: 8px;
 }
+.user-avatar.avatar-role--home_seeker { box-shadow: 0 0 0 2px #22C55E; }
+.user-avatar.avatar-role--agent       { box-shadow: 0 0 0 2px #3B82F6; }
+.user-avatar.avatar-role--landlord    { box-shadow: 0 0 0 2px #8B5CF6; }
+.user-avatar.avatar-role--admin       { box-shadow: 0 0 0 2px #EF4444; }
+.user-avatar__img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
 /* Section */
 .admin-section    { margin-bottom: 40px; }

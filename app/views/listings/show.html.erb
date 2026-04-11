@@ -163,8 +163,8 @@
       <h3><%= t('listings.show.contact_agent') %></h3>
       <div class="wantu-agent-card">
         <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="wantu-agent-card__avatar">
-            <%= @listing.user.full_name.first(1) %>
+          <div class="wantu-agent-card__avatar <%= @listing.user.avatar_role_class %>">
+            <%= avatar_for(@listing.user, img_class: 'wantu-agent-card__avatar__img') %>
           </div>
           <div>
             <%= link_to @listing.user.full_name, agent_profile_path(@listing.user), class: "text-decoration-none fw-medium" %>
