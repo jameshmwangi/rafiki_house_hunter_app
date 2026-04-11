@@ -179,12 +179,14 @@ all_listings = []
 LISTING_CONFIGS.each do |cfg|
   need_type = cfg[:need_type]
   use_case  = cfg[:use_case]
-  queue     = (['featured']  * cfg.fetch(:featured, 0)) +
-              (['draft']     * cfg.fetch(:drafts, 0)) +
-              (['published'] * (cfg[:count] - cfg.fetch(:featured, 0) - cfg.fetch(:drafts, 0)))
+  featured_count  = cfg.fetch(:featured, 0)
+  draft_count     = cfg.fetch(:drafts, 0)
+  published_count = cfg[:count] - featured_count - draft_count
 
-  queue.each do |raw|
-    is_featured = raw == 'featured'
+  queue = (['featured'] * featured_count) + (['draft'] * draft_count) + (['published'] * published_count)
+
+  queue.each do |slot|
+    is_featured = slot == 'featured'
     location    = locations.sample
     room_layout = ROOM_LAYOUTS.fetch(use_case, ['shared']).sample
     title       = unique_title(generate_title(need_type, use_case, room_layout, location.area_name), title_counts)
@@ -197,9 +199,9 @@ LISTING_CONFIGS.each do |cfg|
       price:         PRICE_RANGES.fetch([need_type, use_case], [50_000]).sample,
       price_period:  price_period(need_type, use_case),
       building_name: "#{location.area_name} #{BUILDING_SUFFIXES.fetch(use_case, BUILDING_SUFFIXES['house']).sample}",
-      status:        is_featured ? 'published' : raw,
+      status:        is_featured ? 'published' : slot,
       featured:      is_featured,
-      viewing_fee:   raw == 'draft' ? 0 : VIEWING_FEES.sample,
+      viewing_fee:   slot == 'draft' ? 0 : VIEWING_FEES.sample,
       bathrooms:     use_case == 'event_venue' ? 2 : [1, 1, 1, 2, 2, 3].sample,
       location:      location,
       user:          managers.sample)
@@ -207,20 +209,19 @@ LISTING_CONFIGS.each do |cfg|
 end
 
 puts "Seeding property images..."
-available_images = %w[
-  featuredhero1.png featuredhero2.png featuredhero3.png
-  featuredhero4.png featuredhero5.png featuredhero6.png 
-].map { |f| Rails.root.join('app', 'assets', 'images', f) }
- .select { |p| File.exist?(p) }
+available_images = Dir[Rails.root.join('db', 'seed_images', '*.png')].sort
 
 all_listings.each do |listing|
   next if listing.property_images.count >= 8
-  8.times do |i|
-    img_path = available_images[i % available_images.length]
-    next unless img_path
-    pi = listing.property_images.find_or_create_by!(image_url: "seed_#{listing.id}_#{i}") { |r| r.image_url = img_path.to_s }
+# pi->property_images
+  available_images.cycle.take(8).each_with_index do |img_path, i|
+    pi = listing.property_images.find_or_create_by!(image_url: img_path.to_s)
     next if pi.image.attached?
-    pi.image.attach(io: File.open(img_path), filename: "listing_#{listing.id}_#{i}_#{File.basename(img_path)}", content_type: 'image/png')
+    pi.image.attach(
+      io:           File.open(img_path),
+      filename:     "listing_#{listing.id}_#{i}_#{File.basename(img_path)}",
+      content_type: 'image/png'
+    )
   end
 end
 
