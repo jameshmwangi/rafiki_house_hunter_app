@@ -212,14 +212,15 @@ puts "Seeding property images..."
 available_images = Dir[Rails.root.join('db', 'seed_images', '*.png')].sort
 
 all_listings.each do |listing|
-  next if listing.property_images.count >= 8
-# pi->property_images
-  available_images.cycle.take(8).each_with_index do |img_path, i|
-    pi = listing.property_images.find_or_create_by!(image_url: img_path.to_s)
+  next if listing.property_images.count >= available_images.length
+
+  available_images.cycle.take(available_images.length).each_with_index do |img_path, i|
+    filename = File.basename(img_path)
+    pi = listing.property_images.find_or_create_by!(image_url: filename)
     next if pi.image.attached?
     pi.image.attach(
       io:           File.open(img_path),
-      filename:     "listing_#{listing.id}_#{i}_#{File.basename(img_path)}",
+      filename:     "listing_#{listing.id}_#{i}_#{filename}",
       content_type: 'image/png'
     )
   end
