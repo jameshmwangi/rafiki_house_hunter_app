@@ -39,6 +39,8 @@ Rails.application.configure do
 
   # Store uploaded files on S3 (see config/storage.yml for options).
   config.active_storage.service = :amazon
+  config.active_storage.queues.analysis = nil
+  config.active_storage.queues.purge = nil
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil

@@ -211,18 +211,26 @@ end
 puts "Seeding property images..."
 available_images = Dir[Rails.root.join('db', 'seed_images', '*.png')].sort
 
-all_listings.each do |listing|
-  next if listing.property_images.count >= available_images.length
+if available_images.empty?
+  puts "  ⚠  No seed images found in db/seed_images/ — skipping image seeding"
+else
+  all_listings.each do |listing|
+    # Remove orphaned PropertyImage records (created but never attached)
+    listing.property_images.select { |pi| !pi.image.attached? }.each(&:destroy)
 
-  available_images.cycle.take(available_images.length).each_with_index do |img_path, i|
-    filename = File.basename(img_path)
-    pi = listing.property_images.find_or_create_by!(image_url: filename)
-    next if pi.image.attached?
-    pi.image.attach(
-      io:           File.open(img_path),
-      filename:     "listing_#{listing.id}_#{i}_#{filename}",
-      content_type: 'image/png'
-    )
+    attached_count = listing.property_images.count { |pi| pi.image.attached? }
+    next if attached_count >= available_images.length
+
+    available_images.each_with_index do |img_path, i|
+      filename = File.basename(img_path)
+      pi = listing.property_images.find_or_create_by!(image_url: filename)
+      next if pi.image.attached?
+      pi.image.attach(
+        io:           File.open(img_path),
+        filename:     "listing_#{listing.id}_#{i}_#{filename}",
+        content_type: 'image/png'
+      )
+    end
   end
 end
 
