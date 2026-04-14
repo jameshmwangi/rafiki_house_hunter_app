@@ -18,13 +18,15 @@
   </head>
 
   <body>
-    <%= render 'shared/navbar' %>
+    <%= render 'shared/pc_navbar' %>
+    <%= render 'shared/mobile_top_nav_tabs' %>
     <%= render 'shared/flash' %>
 
-    <main>
+    <main class="main-content">
       <%= yield %>
     </main>
 
     <%= render 'shared/footer' %>
+    <%= render 'shared/mobile_bottom_nav' %>
   </body>
 </html>

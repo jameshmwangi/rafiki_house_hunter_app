@@ -11,4 +11,4 @@ bundle install
 bundle exec rails assets:precompile
 bundle exec rails assets:clean
 bundle exec rails db:prepare
-bundle exec rails db:seed
+# bundle exec rails db:seed  # disabled – run manually via `rails db:seed` in Render shell when needed
