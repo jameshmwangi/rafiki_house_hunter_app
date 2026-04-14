@@ -106,7 +106,7 @@
       <h2><%= t('home.cta_title') %></h2>
       <p><%= t('home.cta_subtitle') %></p>
       <div class="wantu-cta__actions">
-        <%= link_to t('home.cta_contact'), "#", class: "wantu-btn wantu-btn--blue" %>
+        <%= link_to t('home.cta_contact'), "https://jamesportfo1io.netlify.app", target: "_blank", rel: "noopener noreferrer", class: "wantu-btn wantu-btn--blue" %>
         <%= link_to t('nav.list_place'),
             user_signed_in? ? new_dashboard_listing_path : new_user_session_path(redirect_to: new_dashboard_listing_path),
             class: "wantu-btn wantu-btn--blue" %>

@@ -837,9 +837,10 @@ h2 { font-size: 2rem; font-weight: 600; }
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
+      min-width: 40px;
       height: 40px;
-      border-radius: 50%;
+      padding: 0 12px;
+      border-radius: 20px;
       border: 1px solid var(--border-color);
       color: var(--primary-dark);
       text-decoration: none;
@@ -852,6 +853,11 @@ h2 { font-size: 2rem; font-weight: 600; }
       }
     }
   }
+  .page a {
+    padding: 0;
+    width: 40px;
+    border-radius: 50%;
+  }
   .page.current {
     display: inline-flex;
     align-items: center;
@@ -862,6 +868,117 @@ h2 { font-size: 2rem; font-weight: 600; }
     background: var(--primary-green);
     color: var(--white);
     font-weight: 600;
+  }
+}
+
+//  MOBILE NAV — Top Tab Strip + Bottom Tab Bar
+
+// Mobile layout adjustments
+@media (max-width: 767px) {
+  .main-content {
+    padding-bottom: 70px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+// Top Tab Strip
+.top-tab-strip {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--white);
+
+  a {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding-bottom: 4px;
+
+    &.active {
+      color: var(--primary-green);
+      font-weight: 600;
+      border-bottom: 2px solid var(--primary-green);
+    }
+  }
+}
+
+// Bottom Tab Bar
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--white);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+}
+
+.bottom-nav__tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--color-grey-400);
+  text-decoration: none;
+  font-size: 0.65rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  &.active,
+  &.active span {
+    color: var(--primary-green);
+  }
+
+  &.active svg {
+    stroke: var(--primary-green);
+  }
+}
+
+
+
+// button_to generates a form wrapperso it behave as a flex child
+.bottom-nav form {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+// Visibility: mobile-only
+.top-tab-strip,
+.bottom-nav {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .top-tab-strip,
+  .bottom-nav {
+    display: none;
+  }
+}
+
+// Hide Bootstrap hamburger collapse on mobile when bottom nav is active
+@media (max-width: 767px) {
+  .wantu-navbar__toggle {
+    display: none !important;
+  }
+  .navbar-collapse,
+  #mainNav {
+    display: none !important;
   }
 }
 
