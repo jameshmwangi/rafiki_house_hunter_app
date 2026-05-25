@@ -3,7 +3,7 @@ class Listing < ApplicationRecord
   belongs_to :location
 
   has_many :favourites,            dependent: :destroy
-  has_many :property_images,       dependent: :destroy
+  has_many :property_images,       -> { order(created_at: :asc) }, dependent: :destroy
   has_many :viewing_appointments,  dependent: :destroy
   has_many :property_comments,     dependent: :destroy
 
@@ -50,18 +50,23 @@ class Listing < ApplicationRecord
   }
   scope :search_by_keyword, ->(keyword) {
     if keyword.present?
+      sanitized = keyword.strip
       joins(:location).where(
         'listings.title ILIKE :q OR listings.description ILIKE :q OR listings.building_name ILIKE :q ' \
         'OR locations.area_name ILIKE :q OR locations.county ILIKE :q OR locations.sub_county ILIKE :q ' \
         'OR locations.country ILIKE :q',
-        q: "%#{keyword}%"
+        q: "%#{sanitized}%"
       )
     end
   }
 
   def publish!
     update!(status: 'published')
-    ListingMailer.listing_published(self).deliver_later
+    begin
+      ListingMailer.listing_published(self).deliver_now
+    rescue => e
+      Rails.logger.error("[ListingMailer] listing_published failed: #{e.class}: #{e.message}")
+    end
   end
 
   def hide!

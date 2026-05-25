@@ -29,6 +29,7 @@ class User < ApplicationRecord
   validates :full_name, presence: true
   validates :role, presence: true, inclusion: { in: ROLES }
   validate :acceptable_avatar
+  validate :password_complexity
 
   def avatar_role_class
     "avatar-role--#{role}"
@@ -88,6 +89,26 @@ class User < ApplicationRecord
 
     if avatar.blob.byte_size > 5.megabytes
       errors.add(:avatar, 'must be less than 5 MB')
+    end
+  end
+
+  def password_complexity
+    return if password.blank?
+
+    unless password.length >= 8
+      errors.add(:password, 'must be at least 8 characters long')
+    end
+
+    unless password.match?(/[A-Z]/)
+      errors.add(:password, 'must include at least one uppercase letter')
+    end
+
+    unless password.match?(/[a-z]/)
+      errors.add(:password, 'must include at least one lowercase letter')
+    end
+
+    unless password.match?(/[0-9]/)
+      errors.add(:password, 'must include at least one number')
     end
   end
 end

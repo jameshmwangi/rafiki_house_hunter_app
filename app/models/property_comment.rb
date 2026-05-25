@@ -7,5 +7,5 @@ class PropertyComment < ApplicationRecord
   has_many :replies, class_name: "PropertyComment",
                      foreign_key: :parent_comment_id, dependent: :destroy
 
-  validates :body, presence: true
+  validates :body, presence: { message: "Comment can't be blank" }
 end

@@ -221,6 +221,82 @@ h2 { font-size: 2rem; font-weight: 600; }
   color: var(--primary-dark);
 }
 
+//  ABOUT WANTU
+.wantu-about { padding: 70px 0 30px; }
+.wantu-about__inner {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+.wantu-about__eyebrow,
+.wantu-how-it-works__eyebrow {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--primary, #2563eb);
+  margin-bottom: 0.75rem;
+}
+.wantu-about__body {
+  font-size: 1.075rem;
+  line-height: 1.7;
+  color: var(--text-gray, #4b5563);
+  margin-top: 0.5rem;
+}
+
+//  HOW IT WORKS
+.wantu-how-it-works {
+  padding: 30px 0 70px;
+  text-align: center;
+}
+.wantu-how-it-works__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 1.5rem;
+  text-align: left;
+}
+.wantu-step-card {
+  background: var(--white, #fff);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 16px;
+  padding: 28px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+    color: var(--primary-dark, #1e3a8a);
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-gray, #4b5563);
+    line-height: 1.6;
+  }
+}
+.wantu-step-card__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--primary, #2563eb);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 991px) {
+  .wantu-how-it-works__grid { grid-template-columns: 1fr; }
+}
+
 //  BROWSE BY LOCATION
 .wantu-locations { padding: 60px 0; }
 .wantu-locations__grid {

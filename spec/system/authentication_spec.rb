@@ -9,8 +9,8 @@ RSpec.describe "Authentication", type: :system do
       fill_in I18n.t('devise.labels.email'), with: "jane@wantu.africa"
       fill_in I18n.t('devise.labels.phone_number'), with: "0712345678"
       select I18n.t('roles.agent'), from: I18n.t('devise.labels.role')
-      fill_in I18n.t('devise.labels.password'), with: "password123"
-      fill_in I18n.t('devise.labels.password_confirmation'), with: "password123"
+      fill_in I18n.t('devise.labels.password'), with: "Password1"
+      fill_in I18n.t('devise.labels.password_confirmation'), with: "Password1"
       click_button I18n.t('devise.registrations.new.sign_up')
 
       user = User.find_by(email: "jane@wantu.africa")
@@ -28,12 +28,12 @@ RSpec.describe "Authentication", type: :system do
   end
 
   describe "sign in" do
-    let!(:user) { create(:user, email: "bob@wantu.africa", password: "password123") }
+    let!(:user) { create(:user, email: "bob@wantu.africa", password: "Password1") }
 
     it "logs in with valid credentials" do
       visit new_user_session_path
       fill_in I18n.t('devise.labels.email'), with: "bob@wantu.africa"
-      fill_in I18n.t('devise.labels.password'), with: "password123"
+      fill_in I18n.t('devise.labels.password'), with: "Password1"
       click_button I18n.t('devise.sessions.new.sign_in')
 
       expect(page).to have_current_path(root_path)
@@ -55,7 +55,7 @@ RSpec.describe "Authentication", type: :system do
     it "logs out the user" do
       sign_in user
       visit root_path
-      click_on I18n.t('nav.logout')
+      click_on I18n.t('nav.logout'), match: :first
 
       expect(page).to have_content(I18n.t('nav.login'))
     end

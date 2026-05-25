@@ -208,6 +208,34 @@ LISTING_CONFIGS.each do |cfg|
   end
 end
 
+# Ensure Juja and Rongai have listings for location cards
+puts "Seeding specific listings for Juja and Rongai..."
+juja_location = locations.find { |loc| loc.area_name == 'Juja' }
+rongai_location = locations.find { |loc| loc.area_name == 'Rongai' }
+
+[juja_location, rongai_location].compact.each do |location|
+  # Add 3 rent listings for each
+  3.times do
+    room_layout = %w[bedsitter one_bedroom two_bedroom].sample
+    title = unique_title(generate_title('rent', 'house', room_layout, location.area_name), title_counts)
+    
+    all_listings << seed!(Listing, { title: title },
+      description:   DESCRIPTIONS[%w[rent house]].sample,
+      need_type:     'rent',
+      use_case:      'house',
+      room_layout:   room_layout,
+      price:         PRICE_RANGES[%w[rent house]].sample,
+      price_period:  'month',
+      building_name: "#{location.area_name} #{BUILDING_SUFFIXES['house'].sample}",
+      status:        'published',
+      featured:      false,
+      viewing_fee:   VIEWING_FEES.sample,
+      bathrooms:     [1, 1, 2].sample,
+      location:      location,
+      user:          managers.sample)
+  end
+end
+
 puts "Seeding property images..."
 available_images = Dir[Rails.root.join('db', 'seed_images', '*.png')].sort
 

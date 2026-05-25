@@ -2,8 +2,8 @@ FactoryBot.define do
   factory :user do
     full_name { Faker::Name.name }
     sequence(:email) { |n| "user#{n}@example.com" }
-    password { "password123" }
-    password_confirmation { "password123" }
+    password { "Password1" }
+    password_confirmation { "Password1" }
     role { "home_seeker" }
 
     trait :agent do

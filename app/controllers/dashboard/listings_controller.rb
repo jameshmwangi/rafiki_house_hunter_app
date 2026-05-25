@@ -25,7 +25,7 @@ module Dashboard
         attach_images!(@listing)
       end
 
-      redirect_to dashboard_listings_path, notice: t('listings.created')
+      redirect_to listing_path(@listing), notice: t('listings.created')
     rescue ActiveRecord::RecordInvalid
       @locations = Location.order(:area_name)
       render :new, status: :unprocessable_entity

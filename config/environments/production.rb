@@ -67,7 +67,8 @@ Rails.application.configure do
 
   # SendGrid SMTP configuration
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.raise_delivery_errors = true
+  # Don't raise on delivery errors so a missing SENDGRID_API_KEY doesn't break signup
+  config.action_mailer.raise_delivery_errors = false
   config.action_mailer.default_url_options = { host: ENV.fetch('APP_HOST', 'wantu.africa') }
   config.action_mailer.smtp_settings = {
     address:              'smtp.sendgrid.net',

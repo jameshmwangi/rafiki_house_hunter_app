@@ -2,20 +2,7 @@
   <%# Reply: append to the replies thread of the parent comment %>
   <% parent = @comment.parent_comment_id %>
   <%= turbo_stream.append "replies-#{parent}" do %>
-    <div class="wantu-comment wantu-comment--reply">
-      <div class="d-flex align-items-start gap-2">
-        <div class="wantu-comment__avatar wantu-comment__avatar--sm <%= @comment.author.avatar_role_class %>">
-          <%= avatar_for(@comment.author, img_class: 'wantu-comment__avatar__img') %>
-        </div>
-        <div class="flex-grow-1">
-          <strong><%= @comment.author.full_name %></strong>
-          <p><%= @comment.body %></p>
-          <div class="wantu-comment__meta">
-            <small><%= l(@comment.created_at.in_time_zone('Nairobi'), format: :short) %></small>
-          </div>
-        </div>
-      </div>
-    </div>
+    <%= render "listings/reply", reply: @comment, listing: @listing %>
   <% end %>
 <% else %>
   <%# Top-level comment: prepend to comments list %>

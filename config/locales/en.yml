@@ -102,6 +102,23 @@ en:
       two_bedroom: "2 Bedroom"
       three_bedroom: "3 Bedroom"
       shared: "Shared"
+    about:
+      eyebrow: "About Wantu"
+      title: "Finding a home in East Africa, simplified."
+      body: "Wantu connects home seekers directly with verified agents and landlords across Kenya. We protect every viewing with held-in-escrow viewing fees, so you only pay agents after the visit happens — no more wasted trips, no more fake listings."
+    how_it_works:
+      eyebrow: "How it works"
+      title: "Three steps to your next home"
+      steps:
+        search:
+          title: "1. Search & filter"
+          body: "Browse thousands of rentals, BnBs, and properties for sale. Filter by price, layout, location, and use case to zero in on the right match."
+        book:
+          title: "2. Book a viewing"
+          body: "Schedule a visit with the agent or landlord. Your viewing fee is held safely by Wantu until you confirm the property exists and the visit happened."
+        move:
+          title: "3. Move in with confidence"
+          body: "Once the viewing is complete, the fee is released. Sign with the agent directly — no middlemen, no surprises."
 
   listings:
     title: "Properties"
@@ -310,6 +327,15 @@ en:
     agent: "Agent"
     landlord: "Landlord"
     admin: "Admin"
+
+  guest_login:
+    heading: "Just evaluating Wantu?"
+    subheading: "Skip the signup and explore as a guest:"
+    as_home_seeker: "Guest Home Seeker Login"
+    as_agent: "Guest Agent Login"
+    as_admin: "Guest Admin Login"
+    signed_in_as: "Signed in as guest %{role}."
+    unavailable: "Guest accounts are not available. Please run db:seed first."
 
 
   errors:

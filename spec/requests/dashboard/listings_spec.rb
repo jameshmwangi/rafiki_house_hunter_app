@@ -27,22 +27,24 @@ RSpec.describe 'Dashboard::Listings', type: :request do
       }
     end
 
-    it 'creates a listing and redirects' do
+    it 'creates a listing and redirects to the listing show page' do
       expect {
         post dashboard_listings_path, params: valid_params
       }.to change(Listing, :count).by(1)
 
-      expect(response).to redirect_to(dashboard_listings_path)
+      expect(response).to redirect_to(listing_path(Listing.last))
     end
   end
 
   describe 'PATCH /dashboard/listings/:id/publish' do
     let(:listing) { create(:listing, :draft, user: agent) }
 
-    it 'publishes the listing and enqueues mailer' do
+    before { ActionMailer::Base.deliveries.clear }
+
+    it 'publishes the listing and delivers the listing_published mailer' do
       expect {
         patch publish_dashboard_listing_path(listing)
-      }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+      }.to change { ActionMailer::Base.deliveries.count }.by(1)
 
       expect(listing.reload.status).to eq('published')
       expect(response).to redirect_to(dashboard_listings_path)
