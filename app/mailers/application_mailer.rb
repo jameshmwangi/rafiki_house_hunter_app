@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "Wantu <noreply@wantu.africa>"
+  default from: "Wantu <jamesmwang1@proton.me>"
   layout "mailer"
 end
